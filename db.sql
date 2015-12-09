@@ -36,11 +36,10 @@ Prices in €
 */
 CREATE TABLE products (
 	product_id SERIAL PRIMARY KEY,
-	/*Some code for product*/
 	code VARCHAR(20) NOT NULL UNIQUE,
 	name VARCHAR(80) NOT NULL,
 	price DECIMAL(10, 2) UNSIGNED,
-	count INT NOT NULL
+	in_stock INT NOT NULL
 );
 
 /*
@@ -56,12 +55,12 @@ CREATE TABLE shopcart (
 
 
 /*Insert 10000 units of coffee to products*/
-INSERT INTO products(code,name,price,count) VALUES("FAIRTRADECOF","Coffee, Fairtrade", 5.20, 10000);
+INSERT INTO products(code,name,price,in_stock) VALUES("FAIRTRADECOF","Coffee, Fairtrade", 5.20, 10000);
 
 /*Insert 1500 units of t-shirts to products*/
-INSERT INTO products(code,name,price,count) VALUES("TSHIRTBL","Cool T-Shirt, blue", 29.90, 1500);
+INSERT INTO products(code,name,price,in_stock) VALUES("TSHIRTBL","Cool T-Shirt, blue", 29.90, 1500);
 
 /*Insert 777 units of footballs to products*/
-INSERT INTO products(code,name,price,count) VALUES("FOOTBALLWHITE","Football, white", 29.90, 1500);
+INSERT INTO products(code,name,price,in_stock) VALUES("FOOTBALLWHITE","Football, white", 12.50, 500);
 
 

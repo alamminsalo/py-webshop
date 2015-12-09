@@ -14,11 +14,9 @@ config = {
 conn = mysql.connector.connect(**config)
 
 def get_products(name, pricemin, pricemax, sort_by, offset, limit):
-    print name, pricemin, pricemax, offset, limit
-
     return
 
-get_products("A", 1, 10)
+#get_products("A", 1, 10)
 
 
 #def add_product(product):
