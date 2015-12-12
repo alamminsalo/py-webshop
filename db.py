@@ -3,7 +3,8 @@
 
 import mysql.connector
 import decimal
-from objects import *
+from objects import Cart
+from objects import Product
 
 config = {
     'user':'shop',
@@ -12,9 +13,14 @@ config = {
     'database':'webshop'
 }
 
+# Set up simple file logging, going to file named db.log
+import logging
+logging.basicConfig(filename="db.log", level=logging.DEBUG)
+
 
 # Get products, with query options
-def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None):
+# If userId is given, inner join is made between products and shopcarts
+def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None, userId = None):
 
     products = {}
 
@@ -22,11 +28,16 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
         conn = mysql.connector.connect(**config)
         cursor = conn.cursor(buffered=True)
 
-        query = "SELECT product_id, code, name, price, in_stock FROM products WHERE TRUE"
         params = []
+        query = "SELECT product_id, code, name, price, in_stock FROM products"
 
-        #Add given parameters to query
-        if productIds != None and len(productIds) > 0:
+        if userId is not None and userId > 0:
+            query += " JOIN shopcarts sc USING(product_id)"
+        
+        query += " WHERE TRUE"
+
+        #Form rest of the query according to given parameters
+        if productIds is not None and len(productIds) > 0:
             query += " AND product_id IN ("
             for i in range(0,len(productIds)):
                 if i > 0:
@@ -35,28 +46,32 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
                 params.append(productIds[i])
             query += ")"
 
-        if name != None:
+        if userId is not None and userId > 0:
+            query += " AND sc.user_id = %s"
+            params.append(userId)
+
+        if name is not None:
             query += " AND name LIKE %s"
             name += "%%"
             params.append(name)
 
-        if minPrice != None:
+        if minPrice is not None:
             query += " AND price >= %s"
             params.append(minPrice)
 
-        if maxPrice != None:
+        if maxPrice is not None:
             query += " AND price <= %s"
             params.append(maxPrice)
         
-        if sortBy != None:
+        if sortBy is not None:
             query += " ORDER BY %s ASC"
             params.append(sortBy)
 
-        if offset != None:
+        if offset is not None:
             query += " OFFSET %s"
             params.append(offset)
 
-        if limit != None:
+        if limit is not None:
             query += " LIMIT %s"
             params.append(limit)
 
@@ -80,7 +95,7 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
 
     return products
 
-#Get single product information, if exists
+#Get single product information, if exists.
 def getProduct(pId):
     products = getProducts(productIds = [pId]).values()
     if len(products) > 0:
@@ -90,7 +105,7 @@ def getProduct(pId):
 
 # Add new or update existing product
 def updateProduct(product):
-    if product != None:
+    if product is not None:
 
         #Validate insertable object
         product.validate()
@@ -123,6 +138,37 @@ def updateProduct(product):
                 conn.close()
             
     return
+
+def getShoppingCart(userId):
+    result = None
+
+    if userId is not None:
+        try:
+            conn = mysql.connector.connect(**config)
+            cursor = conn.cursor()
+
+            query = "SELECT product_id, count FROM shopcarts WHERE user_id = %s"
+
+            cursor.execute(query, (userId))
+
+            #Build Cart object from results
+            for (product_id, count) in cursor:
+                if result is None:
+                    result = Cart(userId)
+                result.products[product_id] = count
+
+
+        except mysql.connector.Error as e:
+              print("Error in product update: {}".format(e))
+
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+    return result
+
 
 def updateCart(cart):
     if cart != None:
@@ -185,22 +231,4 @@ def updateCart(cart):
                 conn.close()
             
     return
-
-
-#Insert test entry
-#updateProduct(Product(code="TESTCODE",name="Test entry",price=99.99,in_stock=999))
-
-#Test querying
-#options = getProductQueryOptions(sortBy='ce')
-#for p in getProducts(options):
-#    print(p.productId, p.code, p.name, p.price, p.in_stock)
-#
-#    #Test updating
-#    p.price += decimal.Decimal(1.09)
-#    #updateProduct(p)
-
-testCart = Cart(79)
-testCart.addProduct(1)
-testCart.addProduct(1)
-updateCart(testCart)
 

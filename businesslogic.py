@@ -1,7 +1,6 @@
 
 import db
 
-
 #Creating or updating product
 def updateProducts(products):
     for p in products:

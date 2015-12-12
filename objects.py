@@ -9,15 +9,15 @@ class Product:
 
     #Validation 
     def validate(self):
-        if self.productId == None:
+        if self.productId is None:
             raise Exception("Validation error in productId")
-        if self.code == None:
+        if self.code is None:
             raise Exception("Validation error in code")
-        if self.name == None:
+        if self.name is None:
             raise Exception("Validation error in name")
-        if self.price == None:
+        if self.price is None:
             raise Exception("Validation error in price")
-        if self.in_stock == None:
+        if self.in_stock is None:
             raise Exception("Validation error in in_stock")
 
 
@@ -29,17 +29,17 @@ class Cart:
         self.products = {}
 
     def addProduct(self, productId):
-        #Add products as dict, where
-        #key is productId and value is amount of products
-        if self.products.get(productId) == None:
+        #In set key is productId and value is amount of products
+        if self.products.get(productId) is None:
             self.products[productId] = 0
 
         self.products[productId] += 1
 
+    #Validation 
     def validate(self):
-        if self.userId == None or self.userId == 0:
+        if self.userId is None or self.userId <= 0:
             raise Exception("Validation error in userId")
-        if self.products == None:
+        if self.products is None:
             raise Exception("Validation error in products")
 
 
