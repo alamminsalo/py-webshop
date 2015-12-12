@@ -2,7 +2,6 @@
 # Database operations
 
 import mysql.connector
-import decimal
 from objects import Cart
 from objects import Product
 
@@ -17,10 +16,13 @@ config = {
 import logging
 logging.basicConfig(filename="db.log", level=logging.DEBUG)
 
+#Assign decimal precision
+import decimal
+decimal.getcontext().prec = 3
 
 # Get products, with query options
 # If userId is given, inner join is made between products and shopcarts
-def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None, userId = None):
+def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None, code = None, userId = None):
 
     products = {}
 
@@ -49,6 +51,10 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
         if userId is not None and userId > 0:
             query += " AND sc.user_id = %s"
             params.append(userId)
+
+        if code is not None:
+            query += " AND code = %s"
+            params.append(code)
 
         if name is not None:
             query += " AND name LIKE %s"
@@ -81,8 +87,8 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
 
         #Add resulted products to array
         for (product_id, code, name, price, in_stock) in cursor:
-            products[product_id] = Product(product_id, code, name, price, in_stock)
-            print(product_id, code, name, price, in_stock)
+            products[product_id] = Product(product_id, str(code), str(name), decimal.Decimal(price), in_stock)
+            #print(product_id, code, name, price, in_stock)
 
     except mysql.connector.Error as e:
           print("Error in products query: {}".format(e))
@@ -96,8 +102,14 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
     return products
 
 #Get single product information, if exists.
-def getProduct(pId):
-    products = getProducts(productIds = [pId]).values()
+def getProduct(pId = None, code = None):
+
+    pIds = None
+    if pId is not None:
+        pIds = [pId]
+
+    products = getProducts(productIds = pIds, code = code).values()
+
     if len(products) > 0:
         return products[0]
     else:
@@ -170,7 +182,7 @@ def getShoppingCart(userId):
     return result
 
 
-def updateCart(cart):
+def updateShoppingCart(cart):
     if cart != None:
 
         #Validate insertable/updateable object
