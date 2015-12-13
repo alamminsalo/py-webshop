@@ -1,28 +1,62 @@
 
+#Business Logic layer between interface and database levels
+
 import db
 
-#Creating or updating product
-def updateProducts(products):
+#Creating or updating products
+def setProducts(products):
+
+    """ here admin caller validation """
+
     for p in products:
         db.updateProduct(p)
 
+#Get single product information by id or product code
+def getProduct(pId = None, code = None):
+    pIds = None
+    if pId is not None:
+        pIds = [pId]
+
+    products = db.getProducts(productIds = pIds, code = code, limit=1)
+
+    if len(products) > 0:
+        return { 'product': vars(products[0]) }
+
+    else:
+        return None
+
+
 #Query products with parameters
 def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None):
-    return db.getProducts(name,sortby,minPrice,maxPrice,offset,limit,productIds)
+
+    products = { 'products': [] }
+
+    for p in db.getProducts(name,sortBy,minPrice,maxPrice,offset,limit,productIds):
+        products['products'].append(vars(p))
+
+    return products
 
 #Update shopping cart of user
-def updateShoppingCart(cart):
+def setShoppingCart(cart):
+
+    """here user caller validation"""
+
     #Check that to-be-updated products are all found in database
     if len(cart.products) > 0:
         products = getProducts(productIds = cart.products.keys())
 
         #Compare lists
-        if not cart.products.keys().issubset(products.keys()):
+        if not set(cart.products.keys()).issubset(set(products.keys())):
             raise Exception("Exception: Some elements not found")
 
-    db.updateCart(cart)
+    db.updateShoppingCart(cart)
 
 #Get shopping cart of user
 def getShoppingCart(userId):
-    return db.getCart(userId)
+
+    """here user caller validation"""
+    
+    return { mycart: db.getShoppingCart(userId) }
+
+
 

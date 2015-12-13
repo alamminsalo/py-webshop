@@ -1,7 +1,7 @@
 
 # Database operations
 
-import mysql.connector
+import mysql.connector 
 from objects import Cart
 from objects import Product
 
@@ -12,10 +12,6 @@ config = {
     'database':'webshop'
 }
 
-# Set up simple file logging, going to file named db.log
-import logging
-logging.basicConfig(filename="db.log", level=logging.DEBUG)
-
 #Assign decimal precision
 import decimal
 decimal.getcontext().prec = 3
@@ -24,7 +20,7 @@ decimal.getcontext().prec = 3
 # If userId is given, inner join is made between products and shopcarts
 def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None, code = None, userId = None):
 
-    products = {}
+    products = []
 
     try:
         conn = mysql.connector.connect(**config)
@@ -81,13 +77,12 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
             query += " LIMIT %s"
             params.append(limit)
 
-        print(query)
         #Exec query
         cursor.execute(query,params)
 
         #Add resulted products to array
         for (product_id, code, name, price, in_stock) in cursor:
-            products[product_id] = Product(product_id, str(code), str(name), decimal.Decimal(price), in_stock)
+            products.append(Product(product_id, str(code), str(name), decimal.Decimal(price), in_stock))
             #print(product_id, code, name, price, in_stock)
 
     except mysql.connector.Error as e:
@@ -101,19 +96,6 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
 
     return products
 
-#Get single product information, if exists.
-def getProduct(pId = None, code = None):
-
-    pIds = None
-    if pId is not None:
-        pIds = [pId]
-
-    products = getProducts(productIds = pIds, code = code).values()
-
-    if len(products) > 0:
-        return products[0]
-    else:
-        return None
 
 # Add new or update existing product
 def updateProduct(product):
@@ -128,7 +110,7 @@ def updateProduct(product):
 
             query, params = "", ()
 
-            if product.productId == None or product.productId <= 0:
+            if product.productId is None or product.productId <= 0:
                 query = "INSERT INTO products(code,name,price,in_stock) VALUES(%s, %s, %s, %s)"
                 params = (product.code, product.name, product.price, product.in_stock)
 
@@ -161,7 +143,7 @@ def getShoppingCart(userId):
 
             query = "SELECT product_id, count FROM shopcarts WHERE user_id = %s"
 
-            cursor.execute(query, (userId))
+            cursor.execute(query, [userId])
 
             #Build Cart object from results
             for (product_id, count) in cursor:
@@ -203,7 +185,6 @@ def updateShoppingCart(cart):
 
             #Form a querystring of values from products in cart
             query = ""
-            productsQuery = ""
             for productId, count in cart.products.items():
 
                 if len(query) > 0:
@@ -216,18 +197,11 @@ def updateShoppingCart(cart):
                 params.append(productId)
                 params.append(count)
 
-                # Add to productsQuery, which we'll use later
-                if len(productsQuery) > 0:
-                    productsQuery += ","
-
-                productsQuery += "%s"
-
-
             #Check if data is to be added to db
             if len(query) > 0:
-                query = "INSERT INTO shopcarts(user_id, product_id, count) VALUES" + query
+                query = ("INSERT INTO shopcarts(user_id, product_id, count) VALUES " + query)
 
-                print(query)
+                ##print(query, params)
                 cursor.execute(query, params)
                 conn.commit()
 

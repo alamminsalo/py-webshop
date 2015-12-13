@@ -1,4 +1,6 @@
 
+from decimal import Decimal
+
 class Product:
     def __init__(self, productId = 0, code = None, name = None, price = None, in_stock = None):
         self.productId = productId
@@ -15,10 +17,14 @@ class Product:
             raise Exception("Validation error in code")
         if self.name is None:
             raise Exception("Validation error in name")
-        if self.price is None:
+        if self.price is None or type(self.price) is not Decimal:
             raise Exception("Validation error in price")
         if self.in_stock is None:
             raise Exception("Validation error in in_stock")
+
+    def from_json(self):
+        #todo from json logic
+        return
 
 
 class Cart:
@@ -41,5 +47,9 @@ class Cart:
             raise Exception("Validation error in userId")
         if self.products is None:
             raise Exception("Validation error in products")
+
+    def from_json(self):
+        #todo from json logic
+        return
 
 
