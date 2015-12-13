@@ -5,12 +5,12 @@ from wsgiref import simple_server
 import falcon
 import simplejson as json
 
-# Local businesslogic
 import businesslogic as bl
+from objects import Product
+from objects import Cart
 
 
- 
-#Products interface
+#Multi Products interface
 class ProductsResource:
 
     #GET handler
@@ -18,7 +18,40 @@ class ProductsResource:
         print("Products GET")
 
         try:
-            resp.body = json.dumps(bl.getProducts())
+            #Queryparams
+            name =      req.params.get('name')
+            code =      req.params.get('code')
+            sortBy =    req.params.get('sortby')
+            minPrice =  req.params.get('min') 
+            maxPrice =  req.params.get('max') 
+            offset =    req.params.get('offset')
+            limit =     req.params.get('limit') or 100
+            productIds =req.params.get('id')
+
+            if minPrice is not None:
+                minPrice = int(minPrice)
+
+            if maxPrice is not None:
+                maxPrice = int(maxPrice)
+
+            if offset is not None:
+                offset = int(offset)
+
+            if limit is not None:
+                limit = int(limit)
+
+            result = bl.getProducts(
+                    name = name,
+                    code = code,
+                    sortBy = sortBy,
+                    minPrice = minPrice,
+                    maxPrice = maxPrice,
+                    offset = offset,
+                    limit = limit,
+                    productIds = productIds
+            )
+
+            resp.body = json.dumps(result, sort_keys=True, default=Product.serialize)
             resp.status = falcon.HTTP_200 #Status Ok
 
         except:
@@ -32,7 +65,7 @@ class ProductResource:
         print("Products GET")
 
         try:
-            resp.body = json.dumps(bl.getProduct(productId))
+            resp.body = json.dumps(bl.getProduct(productId), sort_keys=True, default=Product.serialize)
             resp.status = falcon.HTTP_200 #Status Ok
 
         except:

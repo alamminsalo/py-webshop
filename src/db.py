@@ -18,7 +18,7 @@ decimal.getcontext().prec = 3
 
 # Get products, with query options
 # If userId is given, inner join is made between products and shopcarts
-def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None, code = None, userId = None):
+def getProducts(name = None, sortBy = None, minPrice = None, maxPrice = None, offset = None, limit = None, productIds = None, code = None, userId = None):
 
     products = []
 
@@ -69,15 +69,17 @@ def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, 
             query += " ORDER BY %s ASC"
             params.append(sortBy)
 
-        if offset is not None:
-            query += " OFFSET %s"
-            params.append(offset)
-
         if limit is not None:
             query += " LIMIT %s"
             params.append(limit)
+            
+            #No offset without limit
+            if offset is not None:
+                query += " OFFSET %s"
+                params.append(offset)
 
         #Exec query
+        print(query)
         cursor.execute(query,params)
 
         #Add resulted products to array
@@ -199,7 +201,7 @@ def updateShoppingCart(cart):
 
             #Check if data is to be added to db
             if len(query) > 0:
-                query = ("INSERT INTO shopcarts(user_id, product_id, count) VALUES " + query)
+                query = ("INSERT INTO shopcarts (user_id, product_id, count) VALUES " + query)
 
                 ##print(query, params)
                 cursor.execute(query, params)

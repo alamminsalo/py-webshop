@@ -20,21 +20,16 @@ def getProduct(pId = None, code = None):
     products = db.getProducts(productIds = pIds, code = code, limit=1)
 
     if len(products) > 0:
-        return { 'product': vars(products[0]) }
+        return products[0]
 
     else:
         return None
 
 
 #Query products with parameters
-def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None):
-
-    products = { 'products': [] }
-
-    for p in db.getProducts(name,sortBy,minPrice,maxPrice,offset,limit,productIds):
-        products['products'].append(vars(p))
-
-    return products
+def getProducts(name = None, sortBy = 'name', minPrice = None, maxPrice = None, offset = None, limit = 100, productIds = None, code=None, userId=None):
+    print("GET products")
+    return {'products':db.getProducts(name=name, sortBy=sortBy, minPrice=minPrice, maxPrice=maxPrice, offset=offset, limit=limit, productIds=productIds, code=code, userId=userId)}
 
 #Update shopping cart of user
 def setShoppingCart(cart):

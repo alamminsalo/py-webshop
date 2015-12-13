@@ -18,9 +18,19 @@ class Product:
         if self.name is None:
             raise Exception("Validation error in name")
         if self.price is None or type(self.price) is not Decimal:
+            print(type(self.price))
             raise Exception("Validation error in price")
         if self.in_stock is None:
             raise Exception("Validation error in in_stock")
+
+    def serialize(self):
+        return {
+            'id':self.productId,
+            'code':self.code,
+            'name':self.name,
+            'price':str(self.price),
+            'inStock':self.in_stock
+        }
 
     def from_json(self):
         #todo from json logic
