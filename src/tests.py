@@ -39,7 +39,14 @@ def test_cart_add():
 
     bl.setShoppingCart(cart)
 
+def test_product_remove():
+     
+    p = bl.getProduct(code="POOLBL")
+    db.removeProduct(p.productId)
+
+
 test_product_add()
+test_product_remove()
 test_products_get()
 test_cart_add()
 

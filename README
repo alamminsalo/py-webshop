@@ -45,7 +45,7 @@ POST: add new product
 
 GET: fetch single product by id
 PUT: update product information
-DELETE: remove product from database
+DELETE: remove product from database (products are also removed from shopping carts)
 
 
 ShopCarts:

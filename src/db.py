@@ -134,9 +134,31 @@ def updateProduct(product):
                 cursor.close()
             if conn:
                 conn.close()
-            
-    return
 
+# Delete product from database
+def removeProduct(productId):
+        if productId == None:
+            return
+        try:
+            conn = mysql.connector.connect(**config)
+            cursor = conn.cursor()
+
+            query = "DELETE FROM products WHERE product_id = %s"
+
+            cursor.execute(query, [productId])
+
+            conn.commit()
+
+        except mysql.connector.Error as e:
+              print("Error in product deletion: {}".format(e))
+
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+# Get shopping cart of user
 def getShoppingCart(userId):
     result = None
 

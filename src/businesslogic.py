@@ -13,6 +13,13 @@ def setProduct(product):
 
     db.updateProduct(product)
 
+#Product removal
+def removeProduct(productId):
+
+    """ here admin validation """
+
+    db.removeProduct(productId)
+
 #Get single product information by id or product code 
 def getProduct(pId = None, code = None):
     products = db.getProducts(productIds = [pId] if pId is not None else None, code = code)

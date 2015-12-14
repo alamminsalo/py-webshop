@@ -101,5 +101,17 @@ class ProductResource:
             #Return 500 - internal error
             resp.status = falcon.HTTP_500
 
+    def on_delete(self, req, resp, productId):
+        try:
+            productId = int(productId)
+
+            bl.removeProduct(productId)
+
+            resp.status = falcon.HTTP_200 #Status Ok
+
+        except:
+            #Return 500 - internal error
+            resp.status = falcon.HTTP_500
+
 
 
