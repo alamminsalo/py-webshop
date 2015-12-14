@@ -1,5 +1,5 @@
 
-#Webshop API Description
+Webshop API Description
 
 Features:
 
@@ -12,7 +12,7 @@ Modifying products in shopcarts
 
 API doc:
 
-##Products:
+Products:
 
 Product body content example:
 {
@@ -23,9 +23,9 @@ Product body content example:
 }
 
 
-###/api/products
+/api/products
 
-#GET: fetch from all products
+GET: fetch from all products
 
 Optional Queryparams (8):
 
