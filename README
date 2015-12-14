@@ -1,7 +1,7 @@
 
-Webshop API Description
+#Webshop API Description
 
-Written in Python, currently only has features:
+Features:
 
 Adding products to database
 Modifying products in database
@@ -12,8 +12,7 @@ Modifying products in shopcarts
 
 API doc:
 
-
-Products:
+##Products:
 
 Product body content example:
 {
@@ -24,12 +23,13 @@ Product body content example:
 }
 
 
-/api/products
+###/api/products
 
-GET: fetch from all products
+#GET: fetch from all products
 
 Optional Queryparams (8):
-Optional 'id' single or list of wanted product ids (eg. 5 or 9,3,1)
+
+'id' single or list of wanted product ids (eg. 5 or 9,3,1)
 'name' query by product name, matching from beginning of the product's name
 'code' query by product code, which is unique to the product
 'sortby' sort products by either 'name' or 'price', in asc order
