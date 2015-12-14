@@ -76,8 +76,10 @@ api.add_route('/api/shopcarts/{userId}', shopcart)
 shopcartProducts = ShopCartProductsResource()
 api.add_route('/api/shopcarts/{userId}/products', shopcartProducts)
 
+
 #Start the server 
 if __name__ == '__main__':
+    print("Staring server in 127.0.0.1:8000")
     httpd = simple_server.make_server('127.0.0.1', 8000, api)
     httpd.serve_forever()
 

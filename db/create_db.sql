@@ -29,10 +29,10 @@ CREATE TABLE shopcarts (
 /*Triggers for updating in_stock values of products table*/
 /*On insert minus values, on delete add values back*/
 CREATE TRIGGER stock_insert_trigger BEFORE INSERT ON shopcarts FOR EACH ROW
-	UPDATE products SET in_stock = in_stock - NEW.count WHERE product_id = NEW.product_id;
+	UPDATE products SET in_stock = in_stock - cast(NEW.count as signed) WHERE product_id = NEW.product_id;
 
 CREATE TRIGGER stock_delete_trigger BEFORE DELETE ON shopcarts FOR EACH ROW
-	UPDATE products SET in_stock = in_stock + OLD.count WHERE product_id = OLD.product_id;
+	UPDATE products SET in_stock = in_stock + cast(OLD.count as signed) WHERE product_id = OLD.product_id;
 
 
 /*Insert 10000 units of coffee to products*/

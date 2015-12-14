@@ -10,7 +10,7 @@ Modifying products in shopcarts
 
 
 Usage:
-run python interface.py
+run python server.py
 
 Starts a web server in 127.0.0.1:8000
 which can be queried with HTTP-methods
