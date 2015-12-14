@@ -85,7 +85,7 @@ PUT: update user's shopcart info
 
 /api/shopcarts/{userId}/products
 
-GET: get products listing of user's shopcart
+GET: get products listing of user's shopcart, with similar queryparams as in /products resource
 
 
 
