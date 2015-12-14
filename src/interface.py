@@ -3,97 +3,11 @@
 
 from wsgiref import simple_server
 import falcon
-import simplejson as json
+import json
 
-import businesslogic as bl
-from objects import Product
-from objects import Cart
-
-
-#Multi Products interface
-class ProductsResource:
-
-    #GET handler
-    def on_get(self, req, resp):
-        print("Products GET")
-
-        try:
-            #Queryparams
-            name =      req.params.get('name')
-            code =      req.params.get('code')
-            sortBy =    req.params.get('sortby')
-            minPrice =  req.params.get('min') 
-            maxPrice =  req.params.get('max') 
-            offset =    req.params.get('offset')
-            limit =     req.params.get('limit') or 100
-            productIds =req.params.get('id')
-
-            if minPrice is not None:
-                minPrice = int(minPrice)
-
-            if maxPrice is not None:
-                maxPrice = int(maxPrice)
-
-            if offset is not None:
-                offset = int(offset)
-
-            if limit is not None:
-                limit = int(limit)
-
-            result = bl.getProducts(
-                    name = name,
-                    code = code,
-                    sortBy = sortBy,
-                    minPrice = minPrice,
-                    maxPrice = maxPrice,
-                    offset = offset,
-                    limit = limit,
-                    productIds = productIds
-            )
-
-            resp.body = json.dumps(result, sort_keys=True, default=Product.serialize)
-            resp.status = falcon.HTTP_200 #Status Ok
-
-        except:
-            #Return 500 - internal error
-            resp.status = falcon.HTTP_500
-
-#Single product resource
-class ProductResource:
-    #GET handler
-    def on_get(self, req, resp, productId):
-        print("Products GET")
-
-        try:
-            resp.body = json.dumps(bl.getProduct(productId), sort_keys=True, default=Product.serialize)
-            resp.status = falcon.HTTP_200 #Status Ok
-
-        except:
-            #Return 500 - internal error
-            resp.status = falcon.HTTP_500
-
-
-#Shopping cart interface
-class ShopCartResource:
-
-    def on_get(self, req, resp, userId):
-
-        try:
-            resp.body = json.dumps(bl.getShopCart(userId))
-            resp.status = falcon.HTTP_200
-
-        except:
-            #Return 500 - internal error
-            resp.status = falcon.HTTP_500
-
-    def on_put(self, req, resp):
-        try:
-            #todo update logic
-            resp.status = falcon.HTTP_200
-
-        except:
-            #Return 500 - internal error
-            resp.status = falcon.HTTP_500
+#Resource endpoints import
+from cartsResource import *
+from productsResource import *
 
 
 # Check that client has application/json in Accept header
@@ -144,7 +58,8 @@ class JSONBuilder(object):
 
 
 api = falcon.API(middleware=[ 
-        RequireJSON()
+    RequireJSON(),
+    JSONBuilder()
 ])
 
 
@@ -156,7 +71,10 @@ product = ProductResource()
 api.add_route('/api/products/{productId}', product)
 
 shopcart = ShopCartResource()
-api.add_route('/api/shopcart/{userId}', shopcart)
+api.add_route('/api/shopcarts/{userId}', shopcart)
+
+shopcartProducts = ShopCartProductsResource()
+api.add_route('/api/shopcarts/{userId}/products', shopcartProducts)
 
 #Start the server 
 if __name__ == '__main__':

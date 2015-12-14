@@ -1,12 +1,10 @@
 
 import db
 import businesslogic as bl
-import simplejson as json
+import json
 from decimal import Decimal
 from objects import Cart
 from objects import Product
-import random
-
 
 #DB section
 #Insert test entry 
@@ -23,7 +21,7 @@ def test_product_add():
 def test_products_get():
     print("Testing product get..")
 
-    for p in db.getProducts():
+    for p in db.getProducts(sortBy='price'):
         print(p.productId, p.code, p.name, p.price, p.in_stock)
 
 #Test adding cart and some products to it
@@ -38,6 +36,8 @@ def test_cart_add():
 
     cart2 = db.getShoppingCart(79)
     assert(cart2 is not None)
+
+    bl.setShoppingCart(cart)
 
 test_product_add()
 test_products_get()
@@ -62,5 +62,31 @@ def bl_getShopCartProducts():
     print(a)
 
 bl_getShopCartProducts()
+
+
+def test_product_serialize():
+    p = bl.getProduct(1)
+
+    print(json.dumps(Product.serialize(p), sort_keys = True))
+
+def test_cart_serialize():
+    p = db.getShoppingCart(userId=49)
+    
+    print(p)
+
+    print(json.dumps(Cart.serialize(p), sort_keys=True))
+
+def test_get_products_in_cart():
+    products = db.getProducts(userId=33)
+
+    print(json.dumps(products, default=Product.serialize, sort_keys=True))
+
+test_product_serialize()
+test_cart_serialize()
+test_get_products_in_cart()
+    
+
+
+print("tests finished!")
 
 

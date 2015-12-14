@@ -1,0 +1,81 @@
+
+Webshop API Description
+
+Written in Python, currently only has features:
+
+Adding products to database
+Modifying products in database
+Deleting products in database
+Modifying products in shopcarts
+
+
+
+API doc:
+
+
+Products:
+
+Product body content example:
+{
+    "code": "TESTCODE",
+    "count": 2041,
+    "name": "Test product",
+    "price": "54.20"
+}
+
+
+/api/products
+
+GET: fetch from all products
+
+Optional Queryparams (8):
+Optional 'id' single or list of wanted product ids (eg. 5 or 9,3,1)
+'name' query by product name, matching from beginning of the product's name
+'code' query by product code, which is unique to the product
+'sortby' sort products by either 'name' or 'price', in asc order
+'min' the minimun price products must meet
+'max' the maximum price products must meet
+'offset' for pagination (eg. offset of 20 will leave first 20 products out of results)
+'limit' maximum number of products to be fetched
+
+POST: add new product
+
+
+/api/products/{id}
+
+GET: fetch single product by id
+PUT: update product information
+DELETE: remove product from database
+
+
+ShopCarts:
+
+ShopCart body content example:
+{
+    "products": [
+      {
+        "inCart": 33, --Number of products of same type in cart
+        "productId": 2 --Product's unique id
+      },
+      {
+        "inCart": 99,
+        "productId": 3
+      }
+    ],
+    "userId": 21
+}
+
+
+/api/shopcarts/{userId}
+
+GET: get user's shopcart info
+PUT: update user's shopcart info
+
+/api/shopcarts/{userId}/products
+
+GET: get products listing of user's shopcart
+
+
+
+
+

@@ -66,8 +66,10 @@ def getProducts(name = None, sortBy = None, minPrice = None, maxPrice = None, of
             params.append(maxPrice)
         
         if sortBy is not None:
-            query += " ORDER BY %s ASC"
-            params.append(sortBy)
+            if sortBy == 'name':
+                query += " ORDER BY name ASC"
+            elif sortBy == 'price':
+                query += " ORDER BY price ASC"
 
         if limit is not None:
             query += " LIMIT %s"
