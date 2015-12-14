@@ -9,6 +9,13 @@ Deleting products in database
 Modifying products in shopcarts
 
 
+Usage:
+run python interface.py
+
+Starts a web server in 127.0.0.1:8000
+which can be queried with HTTP-methods
+(eg. localhost:8000/api/products)
+
 
 API doc:
 
