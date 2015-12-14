@@ -8,8 +8,13 @@ Modifying products in database
 Deleting products in database
 Modifying products in shopcarts
 
+Dependencies:
+python mysql connector (oracle)
+falcon REST framework
+
 
 Usage:
+install mysql database and run the database script
 run python server.py
 
 Starts a web server in 127.0.0.1:8000
